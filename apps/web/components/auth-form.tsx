@@ -5,6 +5,7 @@ import * as React from "react"
 import { cn } from "@workspace/ui/lib/utils"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
+import { authClient } from "@/app/lib/auth-client"
 
 function Field({
   label,
@@ -60,10 +61,15 @@ function PasswordInput(props: React.ComponentProps<typeof Input>) {
   )
 }
 
-function OAuthButtons() {
+async function OAuthButtons() {
   return (
     <div className="grid grid-cols-2 gap-3">
-      <Button variant="outline" type="button" className="h-11">
+      <Button  onClick={async () => {
+        await authClient.signIn.social({
+          provider: "google",
+          callbackURL: "http://localhost:3000",
+        });
+      }} variant="outline" type="button" className="h-11">
         <svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
           <path fill="#EA4335" d="M12 10.2v3.9h5.5a4.7 4.7 0 0 1-2 3.1l3.2 2.5c1.9-1.7 3-4.3 3-7.4 0-.7-.1-1.4-.2-2.1H12Z" />
           <path fill="#34A853" d="M6.5 14.3 5.8 14l-2.6 2c1.6 3.2 4.9 5.4 8.8 5.4 2.7 0 4.9-.9 6.5-2.4l-3.2-2.5c-.9.6-2 .9-3.3.9-2.5 0-4.7-1.7-5.5-4Z" />
