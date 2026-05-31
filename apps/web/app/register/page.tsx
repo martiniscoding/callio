@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
-import Link from "next/link"
+import Link from "next/link";
+import { authClient } from "../lib/auth-client";
 
-import { AuthShell } from "@/components/auth-shell"
+import { AuthShell } from "@/components/auth-shell";
 import {
   Button,
   Divider,
@@ -10,11 +11,34 @@ import {
   Input,
   OAuthButtons,
   PasswordInput,
-  useFakeSubmit,
-} from "@/components/auth-form"
+} from "@/components/auth-form";
 
 export default function RegisterPage() {
-  const { loading, onSubmit } = useFakeSubmit()
+  async function handleSubmit(
+    e: React.FormEvent<HTMLFormElement>
+  ) {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    const { data, error } = await authClient.signUp.email({
+      name,
+      email,
+      password,
+      callbackURL: "http://localhost:3000",
+    });
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    console.log(data);
+  }
 
   return (
     <AuthShell
@@ -32,8 +56,9 @@ export default function RegisterPage() {
         </>
       }
     >
-      <form onSubmit={onSubmit} className="grid gap-5">
+      <form onSubmit={handleSubmit} className="grid gap-5">
         <OAuthButtons />
+
         <Divider>or sign up with email</Divider>
 
         <Field label="Full name" id="name">
@@ -75,23 +100,30 @@ export default function RegisterPage() {
             className="mt-0.5 size-4 rounded border-border accent-primary"
             required
           />
+
           <span>
             I agree to Callio&apos;s{" "}
-            <Link href="#" className="text-foreground underline-offset-4 hover:underline">
+            <Link
+              href="#"
+              className="text-foreground underline-offset-4 hover:underline"
+            >
               Terms
             </Link>{" "}
             and{" "}
-            <Link href="#" className="text-foreground underline-offset-4 hover:underline">
+            <Link
+              href="#"
+              className="text-foreground underline-offset-4 hover:underline"
+            >
               Privacy Policy
             </Link>
             .
           </span>
         </label>
 
-        <Button type="submit" size="lg" disabled={loading}>
-          {loading ? "Creating account…" : "Create account"}
+        <Button type="submit" size="lg">
+          Create account
         </Button>
       </form>
     </AuthShell>
-  )
+  );
 }

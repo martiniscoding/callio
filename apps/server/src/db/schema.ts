@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, index , date} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -13,6 +13,15 @@ export const user = pgTable("user", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
+
+export const meeting = pgTable("meeting", {
+   id:text("id").primaryKey(),
+  user_id: text("id").references(()=>user.id),
+  meeting_code:text("meeting_code").notNull().unique(),
+  createdAt:date("created_at").defaultNow()
+})
+
+
 
 export const session = pgTable(
   "session",

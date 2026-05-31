@@ -12,10 +12,22 @@ import {
   PasswordInput,
   useFakeSubmit,
 } from "@/components/auth-form"
+import { authClient } from "../lib/auth-client"
 
 export default function LoginPage() {
   const { loading, onSubmit } = useFakeSubmit()
-
+  const login=async(e)=>{
+    e.preventDefault()
+    console.log(e)
+    const formData= new FormData(e.currentTarget)
+    const email= formData.get("email") as string;
+    const password= formData.get("password") as string;
+     await authClient.signIn.email({
+      email,
+      password,
+     
+    })
+  }
   return (
     <AuthShell
       title="Welcome back"
@@ -32,7 +44,7 @@ export default function LoginPage() {
         </>
       }
     >
-      <form onSubmit={onSubmit} className="grid gap-5">
+      <form onSubmit={login} className="grid gap-5">
         <OAuthButtons />
         <Divider>or continue with email</Divider>
 
